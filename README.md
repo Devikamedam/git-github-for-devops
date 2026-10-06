@@ -74,6 +74,18 @@ Team collaboration using branches, pull requests, code review, merge, and reposi
 
 Compare working-directory changes, staged changes, commits, branches, and local/remote changes.
 
+### 11. [Git Fetch & Fast-Forward Merge](./11-fetch-fast-forward/README.md)
+
+Understand `git fetch`, remote-tracking branches, fetch vs pull, fetch + merge, and fast-forward merges.
+
+### 12. [Git Cherry-Pick](./12-cherry-pick/README.md)
+
+Apply selected commits to another branch, handle cherry-pick conflicts, and deliver specific changes through a Pull Request.
+
+### 13. [Git Restore, Reset & Revert](./13-restore-reset-revert/README.md)
+
+Undo Git changes safely using `git restore`, `git reset --soft`, `--mixed`, `--hard`, `HEAD~1`, and `git revert`.
+
 ---
 
 ## Cloud & DevOps Use
@@ -113,6 +125,9 @@ Quick command revision and scenario-based notes will be maintained in:
 - [x] Conflict Concepts
 - [x] Pull Requests & Fork
 - [x] Git Diff
+- [x] Git Fetch & Fast-Forward Merge
+- [x] Git Cherry-Pick
+- [x] Git Restore, Reset & Revert
 
 ---
 

@@ -1,6 +1,6 @@
 # Git & GitHub — Quick Revision & Troubleshooting Guide
 
-Quick revision notes for Git and GitHub concepts covered through **Day 4**, organized for Cloud/DevOps practice and interview preparation.
+Quick revision notes for Git and GitHub concepts covered through **Day 5**, organized for Cloud/DevOps practice and interview preparation.
 
 ---
 
@@ -934,9 +934,301 @@ This is important in DevOps because resolving the Git conflict incorrectly could
 
 ---
 
+---
+
+# Day 5 — Git Fetch, Cherry-Pick, Restore, Reset & Revert
+
+## 1. Fetch vs Pull
+
+| Command                 | What it does                     | Changes current branch? |
+| ----------------------- | -------------------------------- | ----------------------- |
+| `git fetch origin`      | Downloads remote updates         | ❌ No                   |
+| `git pull origin main`  | Fetches + integrates             | ✅ Yes                  |
+| `git merge origin/main` | Integrates fetched `origin/main` | ✅ Yes                  |
+
+### Safe inspection workflow
+
+```bash
+git fetch origin
+git log --oneline main..origin/main
+git diff main..origin/main
+git merge origin/main
+```
+
+```text
+GitHub
+   ↓ fetch
+origin/main
+   ↓ merge
+local main
+```
+
+---
+
+## 2. Fast-Forward Merge
+
+If local `main` has no separate commits and the remote is simply ahead:
+
+```text
+Local:
+A → B
+
+Remote:
+A → B → C → D
+```
+
+After:
+
+```bash
+git fetch origin
+git merge origin/main
+```
+
+Result:
+
+```text
+A → B → C → D
+            ↑
+           main
+```
+
+No separate merge commit is required.
+
+---
+
+## 3. Cherry-Pick
+
+```bash
+git cherry-pick <commit-id>
+```
+
+Use it when you need a **specific commit**, not the entire branch.
+
+### Our Hands-On Scenario
+
+```text
+dev:
+Base → A → B → C
+       |    |    |
+       |    |    └─ Division
+       |    └────── Multiplication
+       └─────────── Subtraction
+
+             B
+             │ cherry-pick
+             ▼
+
+test:
+Base → B'
+       │
+       │ Pull Request
+       ▼
+
+main:
+Base → B'
+```
+
+Our actual commits:
+
+| Commit | Change         |
+| ------ | -------------- |
+| A      | Subtraction    |
+| B      | Multiplication |
+| C      | Division       |
+
+Only **B — Multiplication** was required in `main`.
+
+The original A, B and C remained on `dev`.
+
+---
+
+## 4. Cherry-Pick Conflict
+
+If:
+
+```bash
+git cherry-pick <commit-id>
+```
+
+produces a conflict:
+
+```text
+Resolve file
+    ↓
+git add <file>
+    ↓
+git cherry-pick --continue
+```
+
+Commands:
+
+```bash
+git add app.py
+git cherry-pick --continue
+```
+
+Cancel an active cherry-pick:
+
+```bash
+git cherry-pick --abort
+```
+
+### Important
+
+Cherry-pick applies the **change introduced by a commit**.
+
+If the selected commit depends on an earlier commit, cherry-picking it alone may cause a conflict or incomplete/broken code.
+
+---
+
+## 5. Restore
+
+| Requirement                   | Command                       |
+| ----------------------------- | ----------------------------- |
+| Discard unstaged file changes | `git restore <file>`          |
+| Remove file from staging      | `git restore --staged <file>` |
+
+Example:
+
+```bash
+git restore app.py
+```
+
+Unstage:
+
+```bash
+git restore --staged app.py
+```
+
+---
+
+## 6. HEAD~1
+
+```text
+A → B → C
+        ↑
+       HEAD
+```
+
+Therefore:
+
+```text
+HEAD~1 = B
+HEAD~2 = A
+```
+
+---
+
+## 7. Reset
+
+| Command                    | Commit | Staging     | Working Changes |
+| -------------------------- | ------ | ----------- | --------------- |
+| `git reset --soft HEAD~1`  | Undo   | Keep staged | Keep            |
+| `git reset --mixed HEAD~1` | Undo   | Unstage     | Keep            |
+| `git reset --hard HEAD~1`  | Undo   | Remove      | Discard         |
+
+### Easy Memory
+
+```text
+SOFT  → Commit → Staging
+MIXED → Commit → Working Directory
+HARD  → Commit → Discard
+```
+
+---
+
+## 8. Revert
+
+```bash
+git revert <commit-id>
+```
+
+Revert creates a **new commit** that reverses an earlier commit.
+
+```text
+A → B → C
+```
+
+After reverting B:
+
+```text
+A → B → C → R
+            ↑
+       reverses B
+```
+
+The original commit remains in history.
+
+---
+
+## 9. Reset vs Revert
+
+| Reset                                    | Revert                             |
+| ---------------------------------------- | ---------------------------------- |
+| Moves branch/HEAD backward               | Creates a new commit               |
+| Can rewrite history                      | Preserves history                  |
+| Useful for local/unpublished corrections | Safer for shared/published history |
+| `git reset ...`                          | `git revert <commit-id>`           |
+
+---
+
+# Day 5 Troubleshooting Scenarios
+
+| Problem                                           | Solution                                           |
+| ------------------------------------------------- | -------------------------------------------------- |
+| Want remote updates without changing local branch | `git fetch origin`                                 |
+| Want to inspect remote commits                    | `git log --oneline main..origin/main`              |
+| Need only one commit from another branch          | `git cherry-pick <commit-id>`                      |
+| Cherry-pick conflict                              | Resolve → `git add` → `git cherry-pick --continue` |
+| Want to cancel cherry-pick                        | `git cherry-pick --abort`                          |
+| Accidentally modified file                        | `git restore <file>`                               |
+| Accidentally staged file                          | `git restore --staged <file>`                      |
+| Committed too early; keep staged                  | `git reset --soft HEAD~1`                          |
+| Undo local commit; continue editing               | `git reset --mixed HEAD~1`                         |
+| Discard latest local commit and tracked changes   | `git reset --hard HEAD~1`                          |
+| Bad commit already shared                         | `git revert <commit-id>`                           |
+
+---
+
+# Day 5 Fast Revision
+
+```text
+FETCH
+Download remote information
+Does not automatically integrate
+
+PULL
+Fetch + integrate
+
+FAST-FORWARD
+Move branch pointer forward
+No separate merge commit required
+
+CHERRY-PICK
+Apply selected commit
+
+RESTORE
+File-level undo / unstage
+
+RESET --SOFT
+Undo commit → keep staged
+
+RESET --MIXED
+Undo commit → keep unstaged
+
+RESET --HARD
+Undo commit → discard tracked changes
+
+REVERT
+Create new undo commit
+Preserve history
+```
+
+---
+
 ## Current Scope
 
-This guide covers the Git and GitHub concepts learned through **Day 4**.
+This guide covers the Git and GitHub concepts learned through **Day 5**.
 
 It is designed for:
 
