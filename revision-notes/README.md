@@ -1236,3 +1236,43 @@ It is designed for:
 - Hands-on Git practice
 - Cloud/DevOps troubleshooting
 - Scenario-based interview preparation
+
+---
+
+## Day 6 — Quick Revision
+
+| Command / Concept                      | Purpose                                             |
+| -------------------------------------- | --------------------------------------------------- |
+| `.gitignore`                           | Ignore matching untracked files                     |
+| `git check-ignore -v FILE`             | Check why a file is ignored                         |
+| `git rm --cached FILE`                 | Stop tracking a file while keeping it locally       |
+| `git stash`                            | Temporarily save tracked changes                    |
+| `git stash -u`                         | Stash tracked changes and untracked files           |
+| `git stash list`                       | List saved stashes                                  |
+| `git stash apply`                      | Restore changes and keep stash entry                |
+| `git stash pop`                        | Restore changes and remove stash on success         |
+| `git stash drop`                       | Delete a selected stash                             |
+| `git merge --abort`                    | Cancel an in-progress merge                         |
+| `git merge --continue`                 | Continue after resolving merge conflicts            |
+| `git rebase --continue`                | Continue a paused rebase                            |
+| `git cherry-pick --continue`           | Continue a paused cherry-pick                       |
+| `git diff --name-only --diff-filter=U` | List unresolved conflict files                      |
+| `ssh-keygen -t ed25519`                | Generate an SSH key pair                            |
+| `ssh -T git@github.com`                | Test GitHub SSH authentication                      |
+| `git clone URL`                        | Clone a remote repository                           |
+| Pull Request                           | Propose and review changes before merging           |
+| Branch Ruleset                         | Enforce repository branch policies                  |
+| GitLab Merge Request                   | GitLab's workflow for reviewing and merging changes |
+| GitLab Runner                          | Execute GitLab CI/CD jobs                           |
+
+### Important Interview Reminders
+
+1. `.gitignore` does not automatically untrack committed files.
+2. `git stash apply` keeps the stash; `git stash pop` removes it after successful application.
+3. GitHub uses Pull Requests; GitLab uses Merge Requests.
+4. Protect important branches using reviews and required checks.
+5. Merge conflicts require resolving the actual code changes, not just removing markers.
+6. SSH private keys must remain protected.
+7. Production deployments should follow controlled CI/CD workflows.
+
+**Hands-on status:** Pending weekend practice.
